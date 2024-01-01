@@ -31,7 +31,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         if (!$category = $this->category->find($id)) {
-            return response()->json(['error' => 'Not Found'], 404);
+            return response()->json(['error' => 'Category Not Found'], 404);
         }
         $category->update($request->all());
         return response()->json($category);
