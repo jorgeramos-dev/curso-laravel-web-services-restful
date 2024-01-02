@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoriesFormRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Http\Requests\CategoriesFormRequest;
 
 class CategoryController extends Controller
 {
@@ -36,5 +36,14 @@ class CategoryController extends Controller
         }
         $category->update($request->all());
         return response()->json($category);
+    }
+
+    public function delete($id)
+    {
+        if (!$category = $this->category->find($id)) {
+            return response()->json(['error' => 'Category Not Found'], 404);
+        }
+        $category->delete();
+        return response()->json(['sucess' => true], 204);
     }
 }
