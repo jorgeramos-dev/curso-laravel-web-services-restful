@@ -23,6 +23,14 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
+    public function show($id)
+    {
+        if (!$category = $this->category->find($id)) {
+            return response()->json(['error' => 'Category Not Found'], 404);
+        }
+        return response()->json($category);
+    }
+
     public function store(CategoriesFormRequest $request)
     {
         $category = $this->category->create($request->all());
