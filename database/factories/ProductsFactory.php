@@ -20,6 +20,7 @@ class ProductsFactory extends Factory
         return [
             'name' => fake()->unique()->word,
             'description' => fake()->sentence(),
+            'category_id' => 1
         ];
     }
 }

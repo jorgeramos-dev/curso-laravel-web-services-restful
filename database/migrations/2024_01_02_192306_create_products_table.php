@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->integer('category_id')->usingned();
+            $table->foreign('category_id')
+                        ->references('id')
+                        ->on('categories')
+                        ->onDelete('cascade'); //se deletar a categoria vai deletar todos produtos 
             $table->string('name', 100)->unique();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
