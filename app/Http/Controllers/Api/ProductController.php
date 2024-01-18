@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUpdateProductFormRequest;
 use App\Models\Products;
 use Illuminate\Http\Request;
 
@@ -27,9 +28,25 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUpdateProductFormRequest $request)
     {
-        //
+        $data = $request->all();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $name = kebab_case($request->name); // helper para formatar nome do arquivo
+            $extension = $request->image->extension();
+
+            $nameFile = "{$name}" . "{$extension}";
+            $data['image'] = $nameFile;
+
+            $upload = $request->image->storeAs('products', $nameFile); // cria pasta produtos e cria arquivo com nome nameFile
+            if (!$upload) {
+                return response()->json(['error' => 'Fail Upload'], 500);
+            }
+
+        }
+        $product = $this->product->create();
+        return response()->json($product, 201);
     }
 
     /**
@@ -37,15 +54,23 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        if ($product = $this->product->find($id)) {
+            return response()->json(['error' => 'Not Found'], 404);
+        }
+        return response()->json($product);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreUpdateProductFormRequest $request, string $id)
     {
-        //
+        if ($product = $this->product->find($id)) {
+            return response()->json(['error' => 'Not Found'], 404);
+        }
+
+        $product->update($request->all());
+        return response()->json($product);
     }
 
     /**
@@ -53,6 +78,10 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if ($product = $this->product->find($id)) {
+            return response()->json(['error' => 'Not Found'], 404);
+        }
+        $product->delete($product);
+        return response()->json(['sucess' => true], 204);
     }
 }
