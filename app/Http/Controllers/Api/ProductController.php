@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUpdateProductFormRequest;
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Suporte\Facades\Storage;
 
 class ProductController extends Controller
 {
-    private $product, $totalPages = 4;
+    private $product, $totalPages = 4, $path = 'products';
 
     public function __construct(Products $product)
     {
@@ -39,7 +40,7 @@ class ProductController extends Controller
             $nameFile = "{$name}" . "{$extension}";
             $data['image'] = $nameFile;
 
-            $upload = $request->image->storeAs('products', $nameFile); // cria pasta produtos e cria arquivo com nome nameFile
+            $upload = $request->image->storeAs($this->path, $nameFile); // cria pasta produtos e cria arquivo com nome nameFile
             if (!$upload) {
                 return response()->json(['error' => 'Fail Upload'], 500);
             }
@@ -69,7 +70,29 @@ class ProductController extends Controller
             return response()->json(['error' => 'Not Found'], 404);
         }
 
-        $product->update($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+
+            if ($product->image) {
+                if (Storage::exists("{$this->path}/{$product->image}")) {
+                    Storage::delete("{$this->path}/{$product->image}");
+                }
+            }
+            $name = kebab_case($request->name); // helper para formatar nome do arquivo
+            $extension = $request->image->extension();
+
+            $nameFile = "{$name}" . "{$extension}";
+            $data['image'] = $nameFile;
+
+            $upload = $request->image->storeAs($this->path, $nameFile); // cria pasta produtos e cria arquivo com nome nameFile
+            if (!$upload) {
+                return response()->json(['error' => 'Fail Upload'], 500);
+            }
+
+        }
+
+        $product->update();
         return response()->json($product);
     }
 
