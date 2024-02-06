@@ -19,7 +19,6 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = $this->category->getResults($request->name);
-
         return response()->json($categories);
     }
 
@@ -34,6 +33,7 @@ class CategoryController extends Controller
     public function store(CategoriesFormRequest $request)
     {
         $category = $this->category->create($request->all());
+        
         return response()->json($category, 201);
     }
 
@@ -43,6 +43,7 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Category Not Found'], 404);
         }
         $category->update($request->all());
+        
         return response()->json($category);
     }
 
@@ -51,6 +52,7 @@ class CategoryController extends Controller
         if (!$category = $this->category->find($id)) {
             return response()->json(['error' => 'Category Not Found'], 404);
         }
+        
         $category->delete();
         return response()->json(['sucess' => true], 204);
     }
