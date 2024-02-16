@@ -24,7 +24,12 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
         });
+    }
+
+    public function render($request, Exceptions $exception)
+    {
+        if ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+            return response()->json(['error' => 'Not_found_URI'], $exception->getStatusCode());
     }
 }
