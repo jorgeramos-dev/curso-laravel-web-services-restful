@@ -95,7 +95,7 @@ return [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
             'expire' => 60,
-            'throttle' => 60,
+            'throttle' => 60, //bloqueia em 60 requisicoes por min
         ],
     ],
 
