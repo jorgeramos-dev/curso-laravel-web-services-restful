@@ -34,5 +34,11 @@ class Handler extends ExceptionHandler
             if($request->expectsJson())
                 return response()->json(['error' => 'Not_found_URI'], $exception->getStatusCode());
         }
+
+        if ($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
+        {
+            if($request->expectsJson())
+                return response()->json(['error' => 'Method_Not_Allower'], $exception->getStatusCode());
+        }
     }
 }
